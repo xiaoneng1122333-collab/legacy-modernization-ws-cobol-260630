@@ -12,5 +12,10 @@
 #
 # Order matters: the last matching pattern takes precedence.
 
+# Maintainer:
+#   Shinya Yanagihara (Microsoft) — Maintainer
+#   GitHub:  https://github.com/shinyay
+#   Contact: shinya.yanagihara@microsoft.com
+
 # Default owner for everything in this repository.
 *   @shinyay

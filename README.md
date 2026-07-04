@@ -100,4 +100,17 @@ make -C tests/e2e smoke
 
 それ以外が「何のアプリで、どう動き、どう作り変えるべきか」は —— **Copilot と一緒に解き明かしてください。**
 
+---
+
+## 👤 メンテナ (Maintainer)
+
+- **Shinya Yanagihara** (Microsoft) — Maintainer
+- GitHub: [@shinyay](https://github.com/shinyay)
+- Contact: shinya.yanagihara@microsoft.com
+
+行動規範・セキュリティに関する連絡は
+[CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) / [SECURITY.md](./SECURITY.md) を参照してください。
+
+---
+
 **Happy modernizing. 🚀**
