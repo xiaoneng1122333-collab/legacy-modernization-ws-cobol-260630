@@ -1,7 +1,279 @@
-# Code of Conduct
+# Code of Conduct / 行動規範
 
-This is a workshop repository. Participants are expected to be respectful and
-collaborative. Harassment, discrimination, and abusive behavior are not
-tolerated. Report concerns to the maintainer (@shinyay) via an issue.
+> **GitHub Copilot Quest Lv.3** ワークショップの行動規範です。
+> Code of Conduct for the **GitHub Copilot Quest Lv.3** workshop.
 
-Based on the Contributor Covenant: https://www.contributor-covenant.org
+**言語 / Language:** [日本語](#日本語) | [English](#english)
+
+---
+
+## 日本語
+
+### 私たちの誓い
+
+私たちメンバー、貢献者、そしてリーダーは、年齢、体格、目に見えるかどうかを問わず
+障害の有無、民族性、性的特徴、性自認と性表現、経験の程度、教育、社会経済的地位、
+国籍、外見、人種、カースト、肌の色、宗教、または性的指向やアイデンティティに関わらず、
+私たちのコミュニティへの参加が誰にとってもハラスメントのない体験となることを誓います。
+
+私たちは、オープンで、歓迎的で、多様性に富み、包摂的で、健全なコミュニティに
+貢献するように行動し、交流することを誓います。
+
+### 私たちの行動基準
+
+コミュニティにとって前向きな環境に貢献する行動の例:
+
+* 他者への共感と親切さを示す
+* 異なる意見、視点、経験を尊重する
+* 建設的なフィードバックを与え、また快く受け入れる
+* 自らの過ちに責任を持ち、影響を受けた人々に謝罪し、その経験から学ぶ
+* 個人としてだけでなく、コミュニティ全体にとって最善であることに焦点を当てる
+
+容認されない行動の例:
+
+* 性的な言葉や画像の使用、およびあらゆる種類の性的な注目や誘い
+* 荒らし行為、侮辱的または中傷的なコメント、個人的または政治的な攻撃
+* 公的または私的なハラスメント
+* 明示的な許可なく、物理的住所やメールアドレスなど他者の個人情報を公開すること
+* 職業的な場において不適切と合理的に見なされるその他の行為
+
+### このワークショップにおける追加の配慮
+
+このリポジトリはハンズオン形式のワークショップ（GitHub Copilot Quest Lv.3）であり、
+参加者が AI を活用してレガシーコードを解析・モダナイズすることを目的としています。
+上記の一般的な基準に加えて、次の配慮をお願いします。
+
+* **AI / Copilot 利用時のマナー**: GitHub Copilot などの AI が生成した内容であっても、
+  提出・共有する成果物の最終的な責任は提出者本人にあります。他の参加者の成果物やアイデアを
+  尊重し、他者の生成物を自分のものとして提示しないでください。生成物を共有する際は、
+  その正確性や適切性に配慮してください。
+* **学習ペースの尊重・ネタバレへの配慮**: このワークショップに「唯一の正解」はありません。
+  各参加者が自分のペースで解析と発見を楽しめるよう、頼まれてもいないのに解析の「答え」を
+  押し付けたり、他者の学びの機会を奪うようなネタバレを避けてください。手助けは歓迎されますが、
+  解法の強制は控えましょう。
+* **ハンズオンでの包摂的な協働**: 初心者を歓迎し、誰もが安心して質問できる雰囲気づくりに
+  協力してください。相手を見下すような態度を取らず、忍耐強く、支援的に接してください。
+
+### 執行に関する責任
+
+コミュニティのリーダーは、容認される行動基準を明確にし執行する責任を負い、不適切、脅迫的、
+攻撃的、または有害と見なされる行動に対して、適切かつ公正な是正措置を講じます。
+
+コミュニティのリーダーは、この行動規範に沿わないコメント、コミット、コード、Wiki の編集、
+Issue、その他の貢献を削除、編集、または拒否する権利と責任を持ち、適切な場合には
+モデレーションの決定の理由を説明します。
+
+### 適用範囲
+
+この行動規範は、すべてのコミュニティ空間内で適用され、また個人がコミュニティを公的に
+代表している場合にも適用されます。コミュニティを代表する例には、公式のメールアドレスの使用、
+公式のソーシャルメディアアカウントを通じた投稿、オンラインまたはオフラインのイベントでの
+任命された代表者としての行動などが含まれます。
+
+### 執行
+
+虐待的、嫌がらせ、またはその他の容認されない行動があった場合は、執行の責任を負う
+コミュニティのリーダーである **shinya.yanagihara@microsoft.com** まで報告してください。
+すべての苦情は迅速かつ公正に検討・調査されます。
+
+すべてのコミュニティのリーダーは、いかなる事案についても報告者のプライバシーと
+セキュリティを尊重する義務があります。
+
+### 執行ガイドライン
+
+コミュニティのリーダーは、この行動規範に違反すると見なす行為に対する結果を判断する際、
+以下の「コミュニティへの影響」に関するガイドラインに従います。
+
+#### 1. 是正 (Correction)
+
+**コミュニティへの影響**: 不適切な言葉の使用や、コミュニティにおいて非専門的または
+歓迎されないと見なされるその他の行為。
+
+**結果**: コミュニティのリーダーからの非公開で書面による警告。違反の性質を明確にし、
+その行動がなぜ不適切であったかを説明します。公の謝罪が求められる場合があります。
+
+#### 2. 警告 (Warning)
+
+**コミュニティへの影響**: 単一の事案または一連の行動による違反。
+
+**結果**: 継続した行動に対する結果を伴う警告。一定期間、関係者との間で、行動規範を執行する
+人々との一方的なやり取りを含め、いかなる交流も行わないこと。これにはコミュニティ空間および
+ソーシャルメディアなどの外部チャネルでの交流を避けることが含まれます。これらの条件に
+違反した場合、一時的または恒久的な追放につながる可能性があります。
+
+#### 3. 一時的な追放 (Temporary Ban)
+
+**コミュニティへの影響**: 継続的な不適切な行動を含む、コミュニティ基準に対する重大な違反。
+
+**結果**: 一定期間、コミュニティとのあらゆる種類の交流または公的なコミュニケーションからの
+一時的な追放。この期間中、行動規範を執行する人々との一方的なやり取りを含め、関係者との
+公的または私的な交流は許可されません。これらの条件に違反した場合、恒久的な追放に
+つながる可能性があります。
+
+#### 4. 恒久的な追放 (Permanent Ban)
+
+**コミュニティへの影響**: 継続的な不適切な行動、個人へのハラスメント、または特定の集団に
+対する攻撃や軽蔑を含む、コミュニティ基準違反のパターンを示すこと。
+
+**結果**: コミュニティ内でのあらゆる種類の公的な交流からの恒久的な追放。
+
+---
+
+## English
+
+### Our Pledge
+
+We as members, contributors, and leaders pledge to make participation in our
+community a harassment-free experience for everyone, regardless of age, body
+size, visible or invisible disability, ethnicity, sex characteristics, gender
+identity and expression, level of experience, education, socio-economic status,
+nationality, personal appearance, race, caste, color, religion, or sexual
+identity and orientation.
+
+We pledge to act and interact in ways that contribute to an open, welcoming,
+diverse, inclusive, and healthy community.
+
+### Our Standards
+
+Examples of behavior that contributes to a positive environment for our
+community include:
+
+* Demonstrating empathy and kindness toward other people
+* Being respectful of differing opinions, viewpoints, and experiences
+* Giving and gracefully accepting constructive feedback
+* Accepting responsibility and apologizing to those affected by our mistakes,
+  and learning from the experience
+* Focusing on what is best not just for us as individuals, but for the overall
+  community
+
+Examples of unacceptable behavior include:
+
+* The use of sexualized language or imagery, and sexual attention or advances of
+  any kind
+* Trolling, insulting or derogatory comments, and personal or political attacks
+* Public or private harassment
+* Publishing others' private information, such as a physical or email address,
+  without their explicit permission
+* Other conduct which could reasonably be considered inappropriate in a
+  professional setting
+
+### Additional Considerations for This Workshop
+
+This repository is a hands-on workshop (GitHub Copilot Quest Lv.3) in which
+participants use AI to analyze and modernize legacy code. In addition to the
+general standards above, we ask for the following considerations:
+
+* **Etiquette when using AI / Copilot**: You are ultimately responsible for any
+  work you submit or share, even when it was generated by an AI such as GitHub
+  Copilot. Respect other participants' work and ideas, and do not present others'
+  AI-generated output as your own. When sharing generated content, be mindful of
+  its accuracy and appropriateness.
+* **Respect for learning pace and avoiding spoilers**: There is no single
+  "correct answer" in this workshop. So that everyone can enjoy analyzing and
+  discovering at their own pace, please avoid imposing analysis "answers" on
+  others uninvited or spoiling their learning opportunities. Offering help is
+  welcome; forcing solutions is not.
+* **Inclusive collaboration in hands-on sessions**: Welcome beginners and help
+  foster an environment where anyone feels safe to ask questions. Please be
+  patient and supportive, and avoid condescending attitudes.
+
+### Enforcement Responsibilities
+
+Community leaders are responsible for clarifying and enforcing our standards of
+acceptable behavior and will take appropriate and fair corrective action in
+response to any behavior that they deem inappropriate, threatening, offensive,
+or harmful.
+
+Community leaders have the right and responsibility to remove, edit, or reject
+comments, commits, code, wiki edits, issues, and other contributions that are
+not aligned to this Code of Conduct, and will communicate reasons for moderation
+decisions when appropriate.
+
+### Scope
+
+This Code of Conduct applies within all community spaces, and also applies when
+an individual is officially representing the community in public spaces.
+Examples of representing our community include using an official e-mail address,
+posting via an official social media account, or acting as an appointed
+representative at an online or offline event.
+
+### Enforcement
+
+Instances of abusive, harassing, or otherwise unacceptable behavior may be
+reported to the community leaders responsible for enforcement at
+**shinya.yanagihara@microsoft.com**. All complaints will be reviewed and
+investigated promptly and fairly.
+
+All community leaders are obligated to respect the privacy and security of the
+reporter of any incident.
+
+### Enforcement Guidelines
+
+Community leaders will follow these Community Impact Guidelines in determining
+the consequences for any action they deem in violation of this Code of Conduct:
+
+#### 1. Correction
+
+**Community Impact**: Use of inappropriate language or other behavior deemed
+unprofessional or unwelcome in the community.
+
+**Consequence**: A private, written warning from community leaders, providing
+clarity around the nature of the violation and an explanation of why the
+behavior was inappropriate. A public apology may be requested.
+
+#### 2. Warning
+
+**Community Impact**: A violation through a single incident or series of
+actions.
+
+**Consequence**: A warning with consequences for continued behavior. No
+interaction with the people involved, including unsolicited interaction with
+those enforcing the Code of Conduct, for a specified period of time. This
+includes avoiding interactions in community spaces as well as external channels
+like social media. Violating these terms may lead to a temporary or permanent
+ban.
+
+#### 3. Temporary Ban
+
+**Community Impact**: A serious violation of community standards, including
+sustained inappropriate behavior.
+
+**Consequence**: A temporary ban from any sort of interaction or public
+communication with the community for a specified period of time. No public or
+private interaction with the people involved, including unsolicited interaction
+with those enforcing the Code of Conduct, is allowed during this period.
+Violating these terms may lead to a permanent ban.
+
+#### 4. Permanent Ban
+
+**Community Impact**: Demonstrating a pattern of violation of community
+standards, including sustained inappropriate behavior, harassment of an
+individual, or aggression toward or disparagement of classes of individuals.
+
+**Consequence**: A permanent ban from any sort of public interaction within the
+community.
+
+---
+
+## Attribution / 帰属
+
+This Code of Conduct is adapted from the [Contributor Covenant][homepage],
+version 2.1, available at
+[https://www.contributor-covenant.org/version/2/1/code_of_conduct.html][v2.1].
+
+Community Impact Guidelines were inspired by
+[Mozilla's code of conduct enforcement ladder][Mozilla CoC].
+
+For answers to common questions about this code of conduct, see the FAQ at
+[https://www.contributor-covenant.org/faq][FAQ]. Translations are available at
+[https://www.contributor-covenant.org/translations][translations].
+
+この行動規範は [Contributor Covenant][homepage] バージョン 2.1 を基に作成されています。
+「このワークショップにおける追加の配慮」/「Additional Considerations for This Workshop」
+の節は、本ワークショップ独自の追記です。
+
+[homepage]: https://www.contributor-covenant.org
+[v2.1]: https://www.contributor-covenant.org/version/2/1/code_of_conduct.html
+[Mozilla CoC]: https://github.com/mozilla/diversity
+[FAQ]: https://www.contributor-covenant.org/faq
+[translations]: https://www.contributor-covenant.org/translations
