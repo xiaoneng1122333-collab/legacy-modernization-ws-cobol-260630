@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "💬 Support & how to get help / サポート・困ったときは"
+    url: https://github.com/shinyay/legacy-modernization-ws-cobol-260630/blob/main/SUPPORT.md
+    about: "セットアップやコードの疑問は、まず SUPPORT.md と GitHub Copilot を試してください。/ For setup or code questions, check SUPPORT.md and ask GitHub Copilot first."
+  - name: "🔒 Report a security vulnerability / 脆弱性の報告"
+    url: https://github.com/shinyay/legacy-modernization-ws-cobol-260630/security/advisories/new
+    about: "機微なセキュリティ問題は公開 Issue ではなくこちらから。/ For sensitive security issues, use private reporting instead of a public issue."
