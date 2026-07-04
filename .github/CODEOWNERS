@@ -3,7 +3,12 @@
 # These owners are automatically requested for review when someone opens a
 # pull request that modifies matching files.
 #
-# Docs: https://docs.github.com/en/repositories/managing-your-repositories-settings-and-features/customizing-your-repository/about-code-owners
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Valid CODEOWNERS locations (searched in this order; first match wins):
+#   1. .github/CODEOWNERS  (this file)
+#   2. /CODEOWNERS         (repository root)
+#   3. docs/CODEOWNERS
 #
 # Order matters: the last matching pattern takes precedence.
 
