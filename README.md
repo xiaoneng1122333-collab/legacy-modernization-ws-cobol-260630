@@ -1,5 +1,7 @@
 # GitHub Copilot Quest Lv.3 — COBOL Modernization to Azure
 
+**日本語** | [English](./README.en.md)
+
 > **Mission:** この中にある「ドキュメントもコメントも無い」レガシー COBOL アプリケーションを、
 > **GitHub Copilot** と AI エージェントを駆使して読み解き、理解し、**Azure へモダナイズ**せよ。
 
