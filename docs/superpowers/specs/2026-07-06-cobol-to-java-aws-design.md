@@ -108,8 +108,8 @@ flowchart TB
 | `PROGRAM-ID` | Spring Boot `@Service` クラス | 1:1 対応 |
 | `COPY "api.cpy"` | Java Record / DTO | copybook → Java クラス自動生成 |
 | `CALL "X" USING` | Spring Bean メソッド呼び出し | DI コンテナでワイヤリング |
-| `FD ... INDEXED` | JPA `@Entity` + テーブル | ISAM → Aurora テーブル |
-| `READ/WRITE/REWRITE` | JPA `find/save/merge` | マスタサービス経由 |
+| `FD ... INDEXED` | MyBatis Mapper + テーブル | ISAM → Aurora テーブル |
+| `READ/WRITE/REWRITE` | MyBatis `select/insert/update` | マスタサービス経由 (SQL 明示制御) |
 | `PERFORM UNTIL` | Spring Batch `ChunkOrientedTasklet` | ループ処理 |
 | `EVALUATE` | Java `switch` 式 | パターンマッチング |
 | `EXEC SQL` | Spring Data JPA | 既存 SQL をそのまま流用 |
@@ -139,7 +139,7 @@ flowchart TB
 | **言語** | Java | 21 (LTS) | 最新 LTS、record/switch 式活用 |
 | **フレームワーク** | Spring Boot | 3.3.x | アプリ基盤 |
 | **バッチ** | Spring Batch | 5.x | バッチ処理フレームワーク |
-| **ORM** | Spring Data JPA | 3.3.x | データアクセス |
+| **ORM** | MyBatis | 3.x | データアクセス (SQL ファースト、COBOL のファイル操作を SQL で明示的に制御) |
 | **マイグレーション** | Flyway | 10.x | DB スキーマ管理 |
 | **ビルド** | Gradle | 8.x | ビルドツール |
 | **コンテナ** | Docker | 25+ | コンテナ化 |
@@ -151,7 +151,7 @@ flowchart TB
 | **AWS ファイル** | S3 | — | ファイル保管 |
 | **AWS スケジューラ** | EventBridge | — | バッチ起動トリガー |
 | **CI/CD** | GitHub Actions | — | ビルド・テスト・デプロイ |
-| **IaC** | AWS CDK (Java) | — | インフラ定義 |
+| **IaC** | Terraform | 1.x | インフラ定義 (HCL、AWS Provider) |
 | **テスト** | JUnit 5 + Testcontainers | — | ユニット/統合テスト |
 | **監視** | CloudWatch + SNS | — | メトリクス/アラート |
 
@@ -170,8 +170,8 @@ flowchart TB
 | Flyway マイグレーション移植 | `db/migration/` → Java 版 | Aurora に適用後、スキーマ一致 |
 | ISAM → Aurora 変換ジョブ | `isam-to-rds` Spring Batch ジョブ | 全 7 テーブルにデータ移行完了 |
 | CI/CD パイプライン | GitHub Actions ワークフロー | PR で自動テスト、main で ECR プッシュ |
-| CDK インフラ定義 | `infra/` ディレクトリ | `cdk deploy` で AWS 環境構築 |
-| マスタサービス (7 本) | Spring Data JPA リポジトリ | API でマスタ参照可能 |
+| Terraform インフラ定義 | `infra/` ディレクトリ | `terraform apply` で AWS 環境構築 |
+| マスタサービス (7 本) | MyBatis Mapper インターフェース | API でマスタ参照可能 |
 
 **検証基準:**
 - Aurora テーブルに全マスタデータが移行され、ISAM の内容と完全一致
@@ -295,6 +295,7 @@ java-practice-bank/
 ├── common/                       # 共通ライブラリ
 │   ├── common-domain/            # 共通ドメイン (Status, Money, etc.)
 │   ├── common-batch/             # Spring Batch 共通設定
+│   ├── common-mybatis/           # MyBatis 共通設定 (SqlSessionFactory, TypeHandler)
 │   ├── common-aws/               # AWS SDK ラッパー
 │   └── common-test/              # テストユーティリティ
 │
@@ -330,15 +331,19 @@ java-practice-bank/
 ├── verify/                       # 並行検証
 │   └── comparator-service/       # COBOL vs Java 比較
 │
-├── infra/                        # AWS CDK
-│   ├── src/main/java/.../cdk/
-│   │   ├── PracticeBankApp.java
-│   │   ├── NetworkStack.java
-│   │   ├── DatabaseStack.java
-│   │   ├── EcsStack.java
-│   │   ├── StepFunctionsStack.java
-│   │   └── MonitoringStack.java
-│   └── cdk.json
+├── infra/                        # Terraform
+│   ├── modules/
+│   │   ├── network/              # VPC, Subnet, SG
+│   │   ├── database/             # Aurora, ElastiCache, Amazon MQ
+│   │   ├── ecs/                  # ECS Cluster, Fargate Services, ALB
+│   │   ├── step-functions/       # Step Functions, EventBridge
+│   │   ├── storage/              # S3 Buckets
+│   │   └── monitoring/           # CloudWatch, SNS
+│   ├── environments/
+│   │   ├── dev/
+│   │   ├── staging/
+│   │   └── prod/
+│   └── backend.tf                # Terraform Cloud / S3 backend
 │
 └── docs/
     ├── design/                   # 既存設計書 (参照)
@@ -428,19 +433,19 @@ s3://practice-bank-verify/diffs/{business_date}/
 
 ---
 
-## 10. インフラストラクチャ (CDK)
+## 10. インフラストラクチャ (Terraform)
 
-### 10.1 スタック構成
+### 10.1 モジュール構成
 
-| スタック | リソース | 用途 |
-|---------|---------|------|
-| `NetworkStack` | VPC, Subnet, SG, VPC Endpoints | ネットワーク基盤 |
-| `DatabaseStack` | Aurora PostgreSQL, ElastiCache, Amazon MQ | データ層 |
-| `StorageStack` | S3 Bucket (3つ: input, output, archive) | ファイル保管 |
-| `EcsStack` | ECS Cluster, Fargate Services, ALB | コンテナ基盤 |
-| `BatchStack` | Step Functions, EventBridge Rules | バッチ制御 |
-| `MonitoringStack` | CloudWatch Dashboards, Alarms, SNS | 監視 |
-| `IamStack` | IAM Roles, Policies | アクセス制御 |
+| モジュール | リソース | 用途 |
+|-----------|---------|------|
+| `network` | VPC, Subnet, SG, VPC Endpoints | ネットワーク基盤 |
+| `database` | Aurora PostgreSQL, ElastiCache, Amazon MQ | データ層 |
+| `storage` | S3 Bucket (3つ: input, output, archive) | ファイル保管 |
+| `ecs` | ECS Cluster, Fargate Services, ALB | コンテナ基盤 |
+| `batch` | Step Functions, EventBridge Rules | バッチ制御 |
+| `monitoring` | CloudWatch Dashboards, Alarms, SNS | 監視 |
+| `iam` | IAM Roles, Policies | アクセス制御 |
 
 ### 10.2 環境構成
 
@@ -457,7 +462,7 @@ s3://practice-bank-verify/diffs/{business_date}/
 | テスト種別 | ツール | 網羅基準 | タイミング |
 |-----------|-------|---------|----------|
 | **ユニット** | JUnit 5 + Mockito | ラインカバレッジ ≥ 80% | PR 時 |
-| **統合** | Testcontainers (PG + Redis) | 全リポジトリ + バッチジョブ | PR 時 |
+| **統合** | Testcontainers (PG + Redis) | 全 MyBatis Mapper + バッチジョブ | PR 時 |
 | **E2E** | Step Functions Local + テストデータ | 日次パイプライン全ステップ | main マージ時 |
 | **並行比較** | Comparator Service | 全バッチ出力 | Phase 2 全日 |
 | **性能** | JMeter / k6 | バッチ 4h 以内 | Phase 2 完了時 |
