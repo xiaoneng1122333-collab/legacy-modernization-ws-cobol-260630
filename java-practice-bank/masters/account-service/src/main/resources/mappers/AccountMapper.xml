@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.practicebank.masters.account.AccountMapper">
+
+    <!--
+      Account は Java 17 record (immutable). MyBatis が record の正規コンストラクタを
+      経由して値を詰められるよう &lt;constructor&gt; で明示マッピングする。
+    -->
+    <resultMap id="accountResultMap" type="com.practicebank.masters.account.Account">
+        <constructor>
+            <idArg     javaType="java.lang.String" column="acct_number"/>
+            <arg       javaType="java.lang.String" column="acct_name"/>
+            <arg       javaType="java.lang.String" column="branch_code"/>
+            <arg       javaType="java.lang.String" column="product_code"/>
+            <arg       javaType="java.lang.String" column="acct_status"/>
+            <arg       javaType="java.lang.String" column="cust_id"/>
+            <arg       javaType="java.time.LocalDate" column="opened_date"/>
+            <arg       javaType="java.time.LocalDate" column="dormancy_date"/>
+        </constructor>
+    </resultMap>
+
+    <!-- ACCT-EXISTS / ACCT-LOOKUP: 口座番号 (主キー) による単一検索 -->
+    <select id="findByNumber" resultMap="accountResultMap">
+        SELECT acct_number, acct_name, branch_code, product_code,
+               acct_status, cust_id, opened_date, dormancy_date
+          FROM accounts
+         WHERE acct_number = #{acctNumber}
+    </select>
+
+    <!-- ACCT-LOAD: 1 件の口座レコードを登録 -->
+    <insert id="insert">
+        INSERT INTO accounts (acct_number, acct_name, branch_code, product_code,
+                              acct_status, cust_id, opened_date, dormancy_date)
+        VALUES (#{a.acctNumber}, #{a.acctName}, #{a.branchCode}, #{a.productCode},
+                #{a.acctStatus}, #{a.custId}, #{a.openedDate}, #{a.dormancyDate})
+    </insert>
+
+    <!-- ACCT-LOOKUP-BY-CUSTOMER: cust_id フィルタ (COBOL の代替キーを RDB で再現) -->
+    <select id="findByCustId" resultMap="accountResultMap">
+        SELECT acct_number, acct_name, branch_code, product_code,
+               acct_status, cust_id, opened_date, dormancy_date
+          FROM accounts
+         WHERE cust_id = #{custId}
+         ORDER BY acct_number ASC
+    </select>
+
+    <!-- ACCT-UPDATE-DORMANCY-DATE: 休眠日の更新 -->
+    <update id="updateDormancyDate">
+        UPDATE accounts
+           SET dormancy_date = #{dormancyDate},
+               updated_at    = NOW()
+         WHERE acct_number = #{acctNumber}
+    </update>
+
+</mapper>
