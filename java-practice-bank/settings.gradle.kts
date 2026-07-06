@@ -13,7 +13,7 @@ include("common:common-test")
 include("masters:calendar-service")
 
 // ── masters (Phase 2: 本登録時にコメントアウトを外す) ─────────────────────
-// include("masters:branch-service")
+include("masters:branch-service")
 include("masters:customer-service")
 include("masters:customersearch-service")
 include("masters:product-service")

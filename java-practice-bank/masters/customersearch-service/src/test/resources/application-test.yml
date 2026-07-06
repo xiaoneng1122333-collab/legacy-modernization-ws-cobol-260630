@@ -1,0 +1,4 @@
+# test profile – datasource set dynamically by PostgresTestContainer
+spring:
+  application:
+    name: customersearch-test
