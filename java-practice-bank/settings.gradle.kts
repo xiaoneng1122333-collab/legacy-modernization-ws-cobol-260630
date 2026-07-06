@@ -30,6 +30,8 @@ include("batch:autodebit-job")
 include("batch:interestpost-job")
 include("batch:interestaccrual-job")
 include("batch:txnpost-job")
+include("batch:integrationout-job")
+include("batch:audit-job")
 // include("batch:accounting-daily-job")
 // include("batch:accounting-monthly-job")
 // include("batch:accrual-job")
@@ -48,7 +50,7 @@ include("batch:txnpost-job")
 // include("batch:trade-finance-job")
 
 // ── online (Phase 2) ────────────────────────────────────────────────────
-// include("online:inquiry-api")
+include("online:inquiry-api")
 // include("online:accountlifecycle-api")
 
 // ── verify (Phase 2) ────────────────────────────────────────────────────
