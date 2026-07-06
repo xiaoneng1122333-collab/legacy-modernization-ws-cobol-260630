@@ -14,8 +14,9 @@ include("masters:calendar-service")
 
 // ── masters (Phase 2: 本登録時にコメントアウトを外す) ─────────────────────
 // include("masters:branch-service")
-// include("masters:customer-service")
-// include("masters:product-service")
+include("masters:customer-service")
+include("masters:customersearch-service")
+include("masters:product-service")
 // include("masters:interestrate-service")
 // include("masters:feeschedule-service")
 // include("masters:account-service")
