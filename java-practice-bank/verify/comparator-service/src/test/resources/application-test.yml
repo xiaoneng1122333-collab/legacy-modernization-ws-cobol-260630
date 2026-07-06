@@ -1,0 +1,11 @@
+# テスト用: 同一 PostgreSQL インスタンス / public スキーマ使い回し
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/banking_test
+    username: cobol
+    password: cobol
+  java:
+    datasource:
+      url: jdbc:postgresql://localhost:5432/banking_test
+      username: cobol
+      password: cobol

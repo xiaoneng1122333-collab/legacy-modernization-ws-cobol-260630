@@ -1,0 +1,19 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: comparator-service
+  # COBOL 側出力接続先 (既定スキーマ: public / DB 接続: postgres ユーザー)
+  datasource:
+    url: ${COBOL_DB_URL:jdbc:postgresql://localhost:5432/banking}
+    username: ${COBOL_DB_USER:postgres}
+    password: ${COBOL_DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  # Java 側出力接続先 (Phase 2 では同一 DB / schema=practicebank 運用を想定)
+  java:
+    datasource:
+      url: ${JAVA_DB_URL:jdbc:postgresql://localhost:5432/banking}
+      username: ${JAVA_DB_USER:practicebank}
+      password: ${JAVA_DB_PASSWORD:practicebank}
+      driver-class-name: org.postgresql.Driver
