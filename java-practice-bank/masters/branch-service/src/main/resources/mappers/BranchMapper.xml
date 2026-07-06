@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.practicebank.masters.branch.BranchMapper">
+
+    <!--
+      Branch は Java 17 record (immutable). MyBatis が record の正規コンストラクタを
+      経由して値を詰められるよう &lt;constructor&gt; で明示マッピングする。
+    -->
+    <resultMap id="branchResultMap" type="com.practicebank.masters.branch.Branch">
+        <constructor>
+            <idArg     javaType="java.lang.String" column="branch_code"/>
+            <arg       javaType="java.lang.String" column="branch_name"/>
+            <arg       javaType="java.lang.String" column="branch_name_kana"/>
+            <arg       javaType="java.lang.String" column="branch_type"/>
+            <arg       javaType="java.lang.String" column="address"/>
+            <arg       javaType="java.lang.String" column="phone"/>
+        </constructor>
+    </resultMap>
+
+    <!-- BR-LOOKUP: 支店コード (主キー) による単一検索 -->
+    <select id="findByCode" resultMap="branchResultMap">
+        SELECT branch_code, branch_name, branch_name_kana,
+               branch_type, address, phone
+          FROM branches
+         WHERE branch_code = #{branchCode}
+    </select>
+
+    <!-- BR-LOAD: 1 件の支店レコードを登録 -->
+    <insert id="insert">
+        INSERT INTO branches (branch_code, branch_name, branch_name_kana,
+                              branch_type, address, phone)
+        VALUES (#{b.branchCode}, #{b.branchName}, #{b.branchNameKana},
+                #{b.branchType}, #{b.address}, #{b.phone})
+    </insert>
+
+    <!-- BR-LIST-ALL: 全支店を支店コード昇順で取得 -->
+    <select id="findAll" resultMap="branchResultMap">
+        SELECT branch_code, branch_name, branch_name_kana,
+               branch_type, address, phone
+          FROM branches
+         ORDER BY branch_code ASC
+    </select>
+
+    <!-- BR-LIST-BY-REGION: branch_type フィルタ (COBOL の代替キーを RDB で再現) -->
+    <select id="findByBranchType" resultMap="branchResultMap">
+        SELECT branch_code, branch_name, branch_name_kana,
+               branch_type, address, phone
+          FROM branches
+         WHERE branch_type = #{branchType}
+         ORDER BY branch_code ASC
+    </select>
+
+</mapper>
