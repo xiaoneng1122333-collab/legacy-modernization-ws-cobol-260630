@@ -1,7 +1,7 @@
 // java-practice-bank/build.gradle.kts
 plugins {
     java
-    id("org.springframework.boot") version "3.4.5" apply false
+    id("org.springframework.boot") apply false
     id("io.spring.dependency-management") apply false
 }
 
