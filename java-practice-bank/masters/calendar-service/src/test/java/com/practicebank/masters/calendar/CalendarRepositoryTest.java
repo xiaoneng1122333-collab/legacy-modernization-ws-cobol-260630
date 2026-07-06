@@ -5,6 +5,7 @@ import com.practicebank.common.test.PostgresTestContainer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -17,8 +18,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CalendarRepositoryTest {
 
     @DynamicPropertySource
-    static void configureProperties() {
-        PostgresTestContainer.getInstance().start();
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        PostgresTestContainer container = PostgresTestContainer.getInstance();
+        container.start();
+        registry.add("spring.datasource.url", container::getJdbcUrl);
+        registry.add("spring.datasource.username", container::getUsername);
+        registry.add("spring.datasource.password", container::getPassword);
     }
 
     @Autowired

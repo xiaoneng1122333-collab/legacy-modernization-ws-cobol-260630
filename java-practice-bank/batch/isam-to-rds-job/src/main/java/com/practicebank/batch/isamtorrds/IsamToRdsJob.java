@@ -16,5 +16,11 @@ public class IsamToRdsJob {
     public static void main(String[] args) {
         SpringApplication.run(IsamToRdsJob.class, args);
     }
-    // Steps added in Task 9
+
+    @Bean
+    public Job isamToRdsBatchJob(JobRepository jobRepository, Step loadCalendar) {
+        return new JobBuilder("isamToRdsJob", jobRepository)
+            .start(loadCalendar)
+            .build();
+    }
 }
