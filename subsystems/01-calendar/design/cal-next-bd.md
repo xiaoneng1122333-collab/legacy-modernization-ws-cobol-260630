@@ -64,7 +64,7 @@
 | `CAL-OUTPUT` | グループ | — | OUTPUT 構造体 |
 | `CAL-STATUS` | `PIC 9(2)` | O | ステータスコード（`L6` に 88 レベル定義） |
 | `CAL-OUTPUT-DAY-TYPE` | `PIC X(1)` | O | `"B"`/`"H"`/`"W"`（`L12-13`） |
-| `CAL-OUTPUT-HOLIDAY-NAME` | `PIC X(40)` | O | 祝日名（該当時Calendar.idx から取得） |
+| `CAL-OUTPUT-HOLIDAY-NAME` | `PIC X(40)` | O | 祝日名（該当日の場合、calendar.idx から取得） |
 | `CAL-OUTPUT-NEXT-DATE` | `PIC 9(8)` | O | 今回算出した直近の営業日 |
 
 ### 3.2 内部インターフェース（`copy/private/*.cpy`）
@@ -120,7 +120,7 @@
 | ループ | `[CAL-LOOKUP](cal-lookup.md)` 返却 00 + DAY-TYPE=`B` | `CAL-STATUS=00` + `CAL-OUTPUT-NEXT-DATE` 設定（GOBACK） | `src/cal-next-bd.cob:L44-48` |
 | ループ | `[CAL-LOOKUP](cal-lookup.md)` 返却 00 + DAY-TYPE≠`B` | ループ継続（日付 +1） | `src/cal-next-bd.cob:L49` |
 | ループ | `[CAL-LOOKUP](cal-lookup.md)` 返却 04 | `CAL-STATUS=04`（GOBACK） | `src/cal-next-bd.cob:L50-52` |
-| ルップ | `[CAL-LOOKUP](cal-lookup.md)` 返却 08/12/16 等 | `CAL-STATUS=WS-LO-STATUS`（GOBACK） | `src/cal-next-bd.cob:L53-55` |
+| ループ | `[CAL-LOOKUP](cal-lookup.md)` 返却 08/12/16 等 | `CAL-STATUS=WS-LO-STATUS`（GOBACK） | `src/cal-next-bd.cob:L53-55` |
 | 上限超過 | 反復回数 > 10 | `CAL-STATUS=16`（GOBACK） | `src/cal-next-bd.cob:L59-60` |
 
 ---
@@ -235,7 +235,7 @@ sequenceDiagram
 | # | テスト | 入力 | 期待出力 | 保証するステータス | 分岐カバー |
 |---|--------|------|---------|------------------|-----------|
 | 1 | 正常系 — 金曜 → 翌月曜 | `2026-01-09` (金) | `CAL-OUTPUT-NEXT-DATE=2026-01-13`、`CAL-STATUS=00` | ループ + `B` 検出 | 土日スキップを経て次の `B` を検出 |
-| 2 | 正常系 — 火曜 → 水曜（休日挟まず） | `2026-05-05` (火) | `CAL-OUTPUT-NEXT-DATE=2026-05-07`、`CAL-STATUS=00` | 1 回のループで即 `B` 検出 | 翌日以降が `B` で即時 GOBACK |
+| 2 | 正常系 — 火曜 → 木曜（1 日挟む） | `2026-05-05` (火) | `CAL-OUTPUT-NEXT-DATE=2026-05-07`、`CAL-STATUS=00` | 1 回のループで即 `B` 検出 | 翌日以降が `B` で即時 GOBACK |
 | 3 | 正常系 — 年末 → 翌年初（境界） | `2026-12-31` (木) | `CAL-OUTPUT-NEXT-DATE=2027-01-04`、`CAL-STATUS=00` | 日付跨ぎ + 休日跨ぎ | 週明け・翌年初の `B` 検出 |
 | 4 | 異常系 — 範囲外日付 | `2030-12-31` | `CAL-STATUS=04`、`CAL-OUTPUT-NEXT-DATE=0` | `WHEN 04` の分岐 | `[CAL-LOOKUP](cal-lookup.md)` が `04` を返却したら即時 GOBACK |
 
