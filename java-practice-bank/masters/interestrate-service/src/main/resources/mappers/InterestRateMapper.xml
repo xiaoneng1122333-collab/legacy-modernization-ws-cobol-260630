@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.practicebank.masters.interestrate.InterestRateMapper">
+
+    <!--
+      InterestRate は Java 17 record (immutable). MyBatis が record の正規コンストラクタを
+      経由して値を詰められるよう &lt;constructor&gt; で明示マッピングする。
+    -->
+    <resultMap id="interestRateResultMap" type="com.practicebank.masters.interestrate.InterestRate">
+        <constructor>
+            <idArg     javaType="java.lang.String"   column="product_code"/>
+            <arg       javaType="java.time.LocalDate" column="effective_date"/>
+            <arg       javaType="java.math.BigDecimal" column="annual_rate"/>
+            <arg       javaType="java.lang.Long"     column="tier_threshold_jpy"/>
+        </constructor>
+    </resultMap>
+
+    <!-- IRATE-LOOKUP: 商品コード + 適用日 (複合主キー) による単一検索 -->
+    <select id="findByProductAndDate" resultMap="interestRateResultMap">
+        SELECT product_code, effective_date, annual_rate, tier_threshold_jpy
+          FROM interest_rates
+         WHERE product_code   = #{productCode}
+           AND effective_date = #{effectiveDate}
+    </select>
+
+    <!-- IRATE-LOAD: 1 件の金利レコードを登録 -->
+    <insert id="insert">
+        INSERT INTO interest_rates (product_code, effective_date, annual_rate, tier_threshold_jpy)
+        VALUES (#{ir.productCode}, #{ir.effectiveDate}, #{ir.annualRate}, #{ir.tierThresholdJpy})
+    </insert>
+
+    <!-- 全金利レコードを商品コード・適用日昇順で取得 -->
+    <select id="findAll" resultMap="interestRateResultMap">
+        SELECT product_code, effective_date, annual_rate, tier_threshold_jpy
+          FROM interest_rates
+         ORDER BY product_code ASC, effective_date ASC
+    </select>
+
+    <!-- 指定商品コードに一致する金利レコードを全件取得 (適用日昇順) -->
+    <select id="findByProductCode" resultMap="interestRateResultMap">
+        SELECT product_code, effective_date, annual_rate, tier_threshold_jpy
+          FROM interest_rates
+         WHERE product_code = #{productCode}
+         ORDER BY effective_date ASC
+    </select>
+
+</mapper>

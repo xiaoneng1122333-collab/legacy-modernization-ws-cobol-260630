@@ -17,9 +17,9 @@ include("masters:branch-service")
 include("masters:customer-service")
 include("masters:customersearch-service")
 include("masters:product-service")
-// include("masters:interestrate-service")
+include("masters:interestrate-service")
 // include("masters:feeschedule-service")
-// include("masters:account-service")
+include("masters:account-service")
 
 // ── batch (Phase 2: 各 COBOL サブシステム対応) ─────────────────────────
 include("batch:isam-to-rds-job")
