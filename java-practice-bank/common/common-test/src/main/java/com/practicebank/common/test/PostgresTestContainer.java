@@ -11,7 +11,7 @@ import org.testcontainers.utility.DockerImageName;
 public class PostgresTestContainer extends PostgreSQLContainer<PostgresTestContainer> {
 
     private static final DockerImageName IMAGE = DockerImageName.parse("postgres:16-alpine")
-        .asSubstituteFor("postgres");
+        .asCompatibleSubstituteFor("postgres");
 
     private static volatile PostgresTestContainer instance;
 
