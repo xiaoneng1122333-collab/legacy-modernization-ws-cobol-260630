@@ -32,6 +32,7 @@ include("batch:interestaccrual-job")
 include("batch:txnpost-job")
 include("batch:integrationout-job")
 include("batch:audit-job")
+include("batch:operations-job")
 // include("batch:accounting-daily-job")
 // include("batch:accounting-monthly-job")
 // include("batch:accrual-job")
@@ -54,4 +55,4 @@ include("online:inquiry-api")
 // include("online:accountlifecycle-api")
 
 // ── verify (Phase 2) ────────────────────────────────────────────────────
-// include("verify:comparator-service")
+include("verify:comparator-service")

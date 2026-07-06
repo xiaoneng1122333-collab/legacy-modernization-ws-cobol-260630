@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: integrationout-job
+  batch:
+    job:
+      names: ${job.name:integrationOutJob}
+    jdbc:
+      initialize-schema: always
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:org/springframework/batch/core/schema-postgresql.sql
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/banking}
+    username: ${DB_USER:cobol}
+    password: ${DB_PASSWORD:cobol}
+mybatis:
+  mapper-locations: classpath:mappers/**/*.xml
+integrationout:
+  drain:
+    source-filename: ${INTO_DRAIN_FILENAME:}
+    max-records: ${INTO_DRAIN_MAX:10000}
+    mode: ${INTO_DRAIN_MODE:M}
+  publish:
+    event-type: ${INTO_PUB_EVT_TYPE:}
+    business-date: ${INTO_PUB_BIZ_DATE:}
+    batch-id: ${INTO_PUB_BATCH_ID:}
+    txn-id: ${INTO_PUB_TXN_ID:}
+    account: ${INTO_PUB_ACCOUNT:}
+    amount-jpy: ${INTO_PUB_AMOUNT:}
+    category: ${INTO_PUB_CATEGORY:}
+    reason: ${INTO_PUB_REASON:}
+    count: ${INTO_PUB_COUNT:0}
+    mode: ${INTO_PUB_MODE:M}
+  mock:
+    broker: ${INTO_MOCK_BROKER:true}
+  business:
+    date: ${INTO_BIZ_DATE:}
