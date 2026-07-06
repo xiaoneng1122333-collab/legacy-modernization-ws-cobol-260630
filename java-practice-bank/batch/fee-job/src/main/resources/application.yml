@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: fee-job
+  batch:
+    job:
+      names: ${job.name:feeChargeRun}
+    jdbc:
+      initialize-schema: never
+  sql:
+    init:
+      mode: never
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/banking}
+    username: ${DB_USER:cobol}
+    password: ${DB_PASSWORD:cobol}
+mybatis:
+  mapper-locations: classpath:mappers/**/*.xml
+fee:
+  charge:
+    fee-rev-account: ${FEE_REV_ACCOUNT:0010010000004}
+    cash-account: ${FEE_CASH_ACCOUNT:0010010000001}
+    max-scan: ${FEE_MAX_SCAN:500}
