@@ -23,6 +23,7 @@ include("masters:account-service")
 
 // ── batch (Phase 2: 各 COBOL サブシステム対応) ─────────────────────────
 include("batch:isam-to-rds-job")
+include("batch:txnvalidate-job")
 // include("batch:accounting-daily-job")
 // include("batch:accounting-monthly-job")
 // include("batch:accrual-job")

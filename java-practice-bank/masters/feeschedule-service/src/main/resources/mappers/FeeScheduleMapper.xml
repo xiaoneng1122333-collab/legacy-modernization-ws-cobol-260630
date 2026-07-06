@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.practicebank.masters.feeschedule.FeeScheduleMapper">
+
+    <resultMap id="feeScheduleResultMap" type="com.practicebank.masters.feeschedule.FeeSchedule">
+        <constructor>
+            <idArg     javaType="java.lang.String" column="category"/>
+            <arg       javaType="java.lang.String" column="tier"/>
+            <arg       javaType="java.time.LocalDate" column="effective_date"/>
+            <arg       javaType="java.lang.Long" column="fee_jpy"/>
+        </constructor>
+    </resultMap>
+
+    <!-- FEE-LOOKUP-BY-TIER: カテゴリ・ティヤ・有効開始日時点で有効な料金を検索 -->
+    <select id="lookupByTier" resultMap="feeScheduleResultMap">
+        SELECT category, tier, effective_date, fee_jpy
+          FROM fee_schedules
+         WHERE category = #{category}
+           AND tier = #{tier}
+           AND effective_date &lt;= #{effectiveDate}
+         ORDER BY effective_date DESC
+         LIMIT 1
+    </select>
+
+    <!-- FEE-LOAD: 1 件の手数料レコードを登録 -->
+    <insert id="insert">
+        INSERT INTO fee_schedules (category, tier, effective_date, fee_jpy)
+        VALUES (#{f.category}, #{f.tier}, #{f.effectiveDate}, #{f.feeJpy})
+    </insert>
+
+    <!-- FEE-LOAD: 全手数料レコードを取得 -->
+    <select id="findAll" resultMap="feeScheduleResultMap">
+        SELECT category, tier, effective_date, fee_jpy
+          FROM fee_schedules
+         ORDER BY category, tier, effective_date
+    </select>
+
+</mapper>
