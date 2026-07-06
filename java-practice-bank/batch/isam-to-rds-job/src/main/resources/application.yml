@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: isam-to-rds-job
+  batch:
+    job:
+      names: ${job.name:isamToRdsJob}
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/banking}
+    username: ${DB_USER:cobol}
+    password: ${DB_PASSWORD:cobol}
+mybatis:
+  mapper-locations: classpath:mappers/**/*.xml
+isam:
+  base-path: ${ISAM_BASE_PATH:/workspace/subsystems}

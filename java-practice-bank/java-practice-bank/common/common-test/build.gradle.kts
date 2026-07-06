@@ -10,7 +10,7 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation("org.testcontainers:testcontainers:1.20.3")
-    implementation("org.testcontainers:postgresql:1.20.3")
-    implementation("org.junit.jupiter:junit-jupiter")
+    api("org.testcontainers:testcontainers:1.20.3")
+    api("org.testcontainers:postgresql:1.20.3")
+    api("org.junit.jupiter:junit-jupiter")
 }
