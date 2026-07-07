@@ -227,15 +227,11 @@ locals {
 }
 
 resource "aws_sfn_state_machine" "daily_batch" {
-  name     = "${var.project_name}-daily-batch"
-  role_arn = var.role_arn
-  definition = jsonencode(local.state_machine_definition)
-  type     = "STANDARD"
-  logging_configuration {
-    level           = "ERROR"
-    include_execution_data = false
-  }
-  tags = var.tags
+  name        = "${var.project_name}-daily-batch"
+  role_arn    = var.role_arn
+  definition  = jsonencode(local.state_machine_definition)
+  type        = "STANDARD"
+  tags        = var.tags
 }
 
 resource "aws_cloudwatch_event_rule" "daily_trigger" {

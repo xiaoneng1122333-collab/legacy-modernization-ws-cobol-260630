@@ -18,10 +18,10 @@ resource "aws_rds_cluster" "main" {
 }
 
 resource "aws_rds_cluster_instance" "main" {
-  count              = 2
+  count              = 1
   identifier         = "${var.project_name}-aurora-${count.index}"
   cluster_identifier = aws_rds_cluster.main.id
-  instance_class     = "db.r6g.large"
+  instance_class     = "db.t3.medium"
   engine             = aws_rds_cluster.main.engine
 }
 
@@ -33,7 +33,7 @@ resource "aws_elasticache_subnet_group" "main" {
 resource "aws_elasticache_cluster" "main" {
   cluster_id           = "${var.project_name}-redis"
   engine               = "redis"
-  node_type            = "cache.r6g.large"
+  node_type            = "cache.t4g.micro"
   num_cache_nodes      = 1
   engine_version       = "7.1"
   security_group_ids   = [var.cache_security_group_id]

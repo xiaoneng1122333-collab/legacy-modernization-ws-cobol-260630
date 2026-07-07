@@ -88,10 +88,10 @@ resource "aws_iam_role_policy_attachment" "ecs_execution" {
 
 resource "aws_lb" "app" {
   name               = "practice-bank-dev-alb"
-  internal           = true
+  internal           = false
   load_balancer_type = "application"
   security_groups    = [module.network.app_security_group_id]
-  subnets            = module.network.private_subnet_ids
+  subnets            = module.network.public_subnet_ids
   tags = { Environment = "dev", Project = "practice-bank" }
 }
 
@@ -109,6 +109,16 @@ resource "aws_lb_target_group" "app" {
   tags = { Environment = "dev", Project = "practice-bank" }
 }
 
+resource "aws_lb_listener" "app" {
+  load_balancer_arn = aws_lb.app.arn
+  port              = 80
+  protocol          = "HTTP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.app.arn
+  }
+}
+
 module "ecs" {
   source              = "../../modules/ecs"
   project_name        = "practice-bank-dev"
@@ -122,7 +132,7 @@ module "ecs" {
   db_password         = var.db_password
   log_group_name      = aws_cloudwatch_log_group.app.name
   aws_region          = var.aws_region
-  desired_count       = 2
+  desired_count       = 1
   subnet_ids          = module.network.private_subnet_ids
   app_security_group_id = module.network.app_security_group_id
   target_group_arn    = aws_lb_target_group.app.arn
@@ -173,7 +183,7 @@ resource "aws_iam_role" "eventbridge_invoke" {
     Statement = [{
       Action = "sts:AssumeRole"
       Effect = "Allow"
-      Principal = { Service = "events.amazonaws.com" }
+      Principal = { Service = "scheduler.amazonaws.com" }
     }]
   })
   tags = { Environment = "dev", Project = "practice-bank" }
