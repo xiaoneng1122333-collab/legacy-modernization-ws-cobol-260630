@@ -10,6 +10,7 @@ module "network" {
   project_name        = "practice-bank-dev"
   vpc_cidr            = "10.0.0.0/16"
   availability_zones  = ["ap-northeast-1a", "ap-northeast-1c"]
+  aws_region          = var.aws_region
   tags = { Environment = "dev", Project = "practice-bank" }
 }
 
@@ -77,15 +78,17 @@ resource "aws_iam_role" "ecs_execution" {
       Principal = { Service = "ecs-tasks.amazonaws.com" }
     }]
   })
-  managed_policy_arns = [
-    "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-  ]
   tags = { Environment = "dev", Project = "practice-bank" }
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_execution" {
+  role       = aws_iam_role.ecs_execution.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 resource "aws_lb" "app" {
   name               = "practice-bank-dev-alb"
-  internal           = false
+  internal           = true
   load_balancer_type = "application"
   security_groups    = [module.network.app_security_group_id]
   subnets            = module.network.private_subnet_ids
@@ -115,7 +118,7 @@ module "ecs" {
   execution_role_arn  = aws_iam_role.ecs_execution.arn
   ecr_repository_url  = aws_ecr_repository.app.repository_url
   db_url              = "jdbc:postgresql://${module.database.aurora_endpoint}:5432/banking"
-  db_user             = "cobol"
+  db_user             = "bankadmin"
   db_password         = var.db_password
   log_group_name      = aws_cloudwatch_log_group.app.name
   aws_region          = var.aws_region
@@ -135,30 +138,32 @@ resource "aws_iam_role" "step_functions" {
       Principal = { Service = "states.amazonaws.com" }
     }]
   })
-  inline_policy {
-    name = "ecs-run-task"
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Effect = "Allow"
-          Action = ["ecs:RunTask", "ecs:StopTask", "ecs:DescribeTasks"]
-          Resource = ["*"]
-        },
-        {
-          Effect = "Allow"
-          Action = "iam:PassRole"
-          Resource = [aws_iam_role.ecs_execution.arn]
-        },
-        {
-          Effect = "Allow"
-          Action = ["events:PutTargets", "events:PutRule", "events:DescribeRule"]
-          Resource = ["arn:aws:events:${var.aws_region}:${data.aws_caller_identity.current.account_id}:rule/StepFunctionsGetEventsForECSTaskRule"]
-        }
-      ]
-    })
-  }
   tags = { Environment = "dev", Project = "practice-bank" }
+}
+
+resource "aws_iam_role_policy" "step_functions_ecs" {
+  name = "ecs-run-task"
+  role = aws_iam_role.step_functions.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["ecs:RunTask", "ecs:StopTask", "ecs:DescribeTasks"]
+        Resource = ["*"]
+      },
+      {
+        Effect   = "Allow"
+        Action   = "iam:PassRole"
+        Resource = [aws_iam_role.ecs_execution.arn]
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["events:PutTargets", "events:PutRule", "events:DescribeRule"]
+        Resource = ["arn:aws:events:${var.aws_region}:${data.aws_caller_identity.current.account_id}:rule/StepFunctionsGetEventsForECSTaskRule"]
+      }
+    ]
+  })
 }
 
 resource "aws_iam_role" "eventbridge_invoke" {
@@ -171,18 +176,20 @@ resource "aws_iam_role" "eventbridge_invoke" {
       Principal = { Service = "events.amazonaws.com" }
     }]
   })
-  inline_policy {
-    name = "invoke-step-functions"
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [{
-        Effect   = "Allow"
-        Action   = "states:StartExecution"
-        Resource = ["*"]
-      }]
-    })
-  }
   tags = { Environment = "dev", Project = "practice-bank" }
+}
+
+resource "aws_iam_role_policy" "eventbridge_invoke" {
+  name = "invoke-step-functions"
+  role = aws_iam_role.eventbridge_invoke.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = "states:StartExecution"
+      Resource = ["*"]
+    }]
+  })
 }
 
 module "step_functions" {
