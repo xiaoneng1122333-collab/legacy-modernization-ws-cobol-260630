@@ -3,7 +3,6 @@ package com.practicebank.online.inquiry;
 import com.practicebank.masters.account.AccountServiceApplication;
 import com.practicebank.masters.customer.CustomerServiceApplication;
 import org.mybatis.spring.annotation.MapperScan;
-import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,7 +20,7 @@ import org.springframework.context.annotation.Import;
  * 付きのフルアプリとしても配布されるため、{@link ComponentScan} から
  * 除外してマッパー・リポジトリのみを組み込む。
  */
-@SpringBootApplication(exclude = {MybatisAutoConfiguration.class})
+@SpringBootApplication
 @ComponentScan(basePackages = {
         "com.practicebank.common",
         "com.practicebank.online.inquiry",

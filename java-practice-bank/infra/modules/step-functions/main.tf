@@ -1,251 +1,62 @@
 locals {
+  batch_steps = {
+    MASTER_LOAD      = { next = "INTEGRATION_IN", catch = "AUDIT" }
+    INTEGRATION_IN   = { next = "TXN_VALIDATE", catch = "AUDIT" }
+    TXN_VALIDATE     = { next = "TXN_SORT_MERGE", catch = "AUDIT" }
+    TXN_SORT_MERGE   = { next = "TXN_POST", catch = "AUDIT" }
+    TXN_POST         = { next = "INTEREST_ACCRUAL", catch = "AUDIT" }
+    INTEREST_ACCRUAL = { next = "INTEREST_POST", catch = "AUDIT" }
+    INTEREST_POST    = { next = "AUTODEBIT", catch = "AUDIT" }
+    AUTODEBIT        = { next = "FEE", catch = "AUDIT" }
+    FEE              = { next = "STATEMENT", catch = "AUDIT" }
+    STATEMENT        = { next = "INTEGRATION_OUT", catch = "AUDIT" }
+    INTEGRATION_OUT  = { next = "AUDIT", catch = "AUDIT" }
+    AUDIT            = { next = "FINALIZE", catch = null }
+    FINALIZE         = { next = null, catch = null }
+  }
+
+  state_machine_states = { for step_name, cfg in local.batch_steps :
+    step_name => merge(
+        {
+          Type     = "Task"
+          Resource = "arn:aws:states:::ecs:runTask.sync"
+          Parameters = {
+            Cluster        = var.ecs_cluster_arn
+            TaskDefinition = var.ecs_task_arn
+            LaunchType     = "FARGATE"
+            NetworkConfiguration = {
+              AwsvpcConfiguration = {
+                Subnets        = var.subnet_ids
+                SecurityGroups = [var.security_group_id]
+                AssignPublicIp = var.assign_public_ip
+              }
+            }
+            Overrides = {
+              ContainerOverrides = [{
+                Name    = "batch-job"
+                Command = ["java", "-jar", "app.jar", "--step=${step_name}"]
+              }]
+            }
+          }
+        },
+        cfg.next != null ? { Next = cfg.next } : { End = true },
+        cfg.catch != null ? { Catch = [{ ErrorEquals = ["States.ALL"], Next = cfg.catch }] } : {}
+    )
+  }
+
   state_machine_definition = {
     Comment = "Daily batch pipeline — Japan core banking"
-    StartAt = "MasterLoad"
-    States = {
-      MasterLoad = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=MASTER_LOAD"]
-            }]
-          }
-        }
-        Next = "IntegrationIn"
-        Catch = [{ ErrorEquals = ["States.ALL"], Next = "Audit" }]
-      }
-      IntegrationIn = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=INTEGRATION_IN"]
-            }]
-          }
-        }
-        Next = "TxnValidate"
-        Catch = [{ ErrorEquals = ["States.ALL"], Next = "Audit" }]
-      }
-      TxnValidate = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=TXN_VALIDATE"]
-            }]
-          }
-        }
-        Next = "TxnSortMerge"
-        Catch = [{ ErrorEquals = ["States.ALL"], Next = "Audit" }]
-      }
-      TxnSortMerge = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=TXN_SORT_MERGE"]
-            }]
-          }
-        }
-        Next = "TxnPost"
-        Catch = [{ ErrorEquals = ["States.ALL"], Next = "Audit" }]
-      }
-      TxnPost = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=TXN_POST"]
-            }]
-          }
-        }
-        Next = "InterestAccrual"
-        Catch = [{ ErrorEquals = ["States.ALL"], Next = "Audit" }]
-      }
-      InterestAccrual = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=INTEREST_ACCRUAL"]
-            }]
-          }
-        }
-        Next = "InterestPost"
-        Catch = [{ ErrorEquals = ["States.ALL"], Next = "Audit" }]
-      }
-      InterestPost = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=INTEREST_POST"]
-            }]
-          }
-        }
-        Next = "Autodebit"
-        Catch = [{ ErrorEquals = ["States.ALL"], Next = "Audit" }]
-      }
-      Autodebit = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=AUTODEBIT"]
-            }]
-          }
-        }
-        Next = "Fee"
-        Catch = [{ ErrorEquals = ["States.ALL"], Next = "Audit" }]
-      }
-      Fee = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=FEE"]
-            }]
-          }
-        }
-        Next = "Statement"
-        Catch = [{ ErrorEquals = ["States.ALL"], Next = "Audit" }]
-      }
-      Statement = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=STATEMENT"]
-            }]
-          }
-        }
-        Next = "IntegrationOut"
-        Catch = [{ ErrorEquals = ["States.ALL"], Next = "Audit" }]
-      }
-      IntegrationOut = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=INTEGRATION_OUT"]
-            }]
-          }
-        }
-        Next = "Audit"
-        Catch = [{ ErrorEquals = ["States.ALL"], Next = "Audit" }]
-      }
-      Audit = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=AUDIT"]
-            }]
-          }
-        }
-        Next = "Finalize"
-      }
-      Finalize = {
-        Type     = "Task"
-        Resource = var.ecs_task_arn
-        Parameters = {
-          Cluster        = var.ecs_cluster_arn
-          TaskDefinition = var.ecs_task_arn
-          LaunchType     = "FARGATE"
-          Overrides = {
-            ContainerOverrides = [{
-              Name = "app"
-              Command = ["java", "-jar", "app.jar", "--step=FINALIZE"]
-            }]
-          }
-        }
-        End = true
-      }
-    }
+    StartAt = "MASTER_LOAD"
+    States  = local.state_machine_states
   }
 }
 
 resource "aws_sfn_state_machine" "daily_batch" {
-  name        = "${var.project_name}-daily-batch"
-  role_arn    = var.role_arn
-  definition  = jsonencode(local.state_machine_definition)
-  type        = "STANDARD"
-  tags        = var.tags
-}
-
-resource "aws_cloudwatch_event_rule" "daily_trigger" {
-  name                = "${var.project_name}-daily-batch-trigger"
-  description         = "Triggers daily batch pipeline at 23:00 Asia/Tokyo"
-  schedule_expression = "cron(0 23 * * ? *)"
-  tags                = var.tags
-}
-
-resource "aws_cloudwatch_event_target" "daily_trigger" {
-  rule     = aws_cloudwatch_event_rule.daily_trigger.name
-  arn      = aws_sfn_state_machine.daily_batch.arn
-  role_arn = var.event_role_arn
-  input    = jsonencode({ triggerSource = "eventbridge-cron-daily" })
+  name       = "${var.project_name}-daily-batch"
+  role_arn   = var.role_arn
+  definition = jsonencode(local.state_machine_definition)
+  type       = "STANDARD"
+  tags       = var.tags
 }
 
 resource "aws_scheduler_schedule" "daily_batch" {
@@ -256,8 +67,8 @@ resource "aws_scheduler_schedule" "daily_batch" {
     mode = "OFF"
   }
 
-  schedule_expression = "cron(0 23 * * ? *)"
-  schedule_expression_timezone = "Asia/Tokyo"
+  schedule_expression             = "cron(0 23 * * ? *)"
+  schedule_expression_timezone    = "Asia/Tokyo"
 
   target {
     arn      = aws_sfn_state_machine.daily_batch.arn

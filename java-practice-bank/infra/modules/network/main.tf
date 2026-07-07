@@ -46,6 +46,12 @@ resource "aws_security_group" "app" {
   name_prefix = "${var.project_name}-app-"
   vpc_id      = aws_vpc.main.id
   description = "Security group for application containers"
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]
+  }
   egress {
     from_port   = 0
     to_port     = 0

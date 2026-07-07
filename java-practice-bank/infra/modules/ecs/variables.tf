@@ -8,22 +8,18 @@ variable "tags" {
   default = {}
 }
 
-variable "task_cpu" {
-  type    = number
-  default = 256
-}
-
-variable "task_memory" {
-  type    = number
-  default = 512
+variable "aws_region" {
+  type    = string
+  default = "ap-northeast-1"
 }
 
 variable "execution_role_arn" {
   type = string
 }
 
-variable "ecr_repository_url" {
-  type = string
+variable "task_role_arn" {
+  type    = string
+  default = null
 }
 
 variable "db_url" {
@@ -32,26 +28,12 @@ variable "db_url" {
 
 variable "db_user" {
   type    = string
-  default = "cobol"
+  default = "bankadmin"
 }
 
 variable "db_password" {
   type      = string
   sensitive = true
-}
-
-variable "log_group_name" {
-  type = string
-}
-
-variable "aws_region" {
-  type    = string
-  default = "ap-northeast-1"
-}
-
-variable "desired_count" {
-  type    = number
-  default = 2
 }
 
 variable "subnet_ids" {
@@ -62,6 +44,21 @@ variable "app_security_group_id" {
   type = string
 }
 
-variable "target_group_arn" {
+variable "vpc_id" {
   type = string
+}
+
+variable "ecr_account_id" {
+  type = string
+}
+
+variable "services" {
+  type = map(object({
+    port            = optional(number, 8080)
+    cpu             = optional(number, 256)
+    memory          = optional(number, 512)
+    desired_count   = optional(number, 1)
+    is_long_running = optional(bool, true)
+    path_pattern    = optional(string, "")
+  }))
 }
